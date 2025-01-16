@@ -386,7 +386,6 @@ st.pyplot(fig3)
 
 
 
-
 # GPT Agent Integration for Overflow Analysis
 st.write("### AI Agent Analysis for Overflow (Including Rewards)")
 
@@ -401,7 +400,7 @@ adjusted_cumulative_overflow = sum(adjusted_overflow[range_start:range_end + 1])
 # Function to call the GPT model (fine-tuned or default)
 import openai
 
-openai.api_key = "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"  # Replace with your API key or use st.secrets["openai_api_key"]
+openai.api_key = "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"  # Replace with your API key or use st.secrets["openai_api_key"]
 
 def query_gpt(prompt, model="gpt-3.5-turbo", max_tokens=300, temperature=0.7):
     """
@@ -430,18 +429,11 @@ def query_gpt(prompt, model="gpt-3.5-turbo", max_tokens=300, temperature=0.7):
     except Exception as e:
         return f"Error: {e}"
 
-
-
-
-
-
-
 # Overflow threshold
 overflow_threshold = 250_000  # USD
-significant_overflow = sum(overflow[range_start:range_end + 1])  # Calculate overflow in the selected range
 
-if significant_overflow > overflow_threshold:
-    st.warning(f"Significant overflow detected in the selected range (including rewards): ${significant_overflow:,.2f}")
+if adjusted_cumulative_overflow > overflow_threshold:
+    st.warning(f"Significant overflow detected in the selected range (including rewards): ${adjusted_cumulative_overflow:,.2f}")
 
     # Display choices
     st.write("#### Proposed Mitigation Strategies")
@@ -458,7 +450,7 @@ if significant_overflow > overflow_threshold:
     if st.button("Generate Strategy Plan"):
         if strategy == "1. Increase marketing efforts":
             prompt = f"""
-            A significant token overflow of ${significant_overflow:,.2f} has been detected in the selected range. 
+            A significant token overflow of ${adjusted_cumulative_overflow:,.2f} (including rewards) has been detected in the selected range. 
             Develop a detailed marketing campaign plan to mitigate this issue, focusing on:
             - Enhancing brand visibility
             - Attracting more investors and token buyers
@@ -467,7 +459,7 @@ if significant_overflow > overflow_threshold:
             """
         elif strategy == "2. Add liquidity to the market":
             prompt = f"""
-            A significant token overflow of ${significant_overflow:,.2f} has been detected in the selected range.
+            A significant token overflow of ${adjusted_cumulative_overflow:,.2f} (including rewards) has been detected in the selected range.
             Develop a liquidity provisioning plan to stabilize the market, focusing on:
             - Increasing market depth by adding liquidity pools
             - Adjusting token unlock schedules
@@ -476,7 +468,7 @@ if significant_overflow > overflow_threshold:
             """
         else:
             prompt = f"""
-            A significant token overflow of ${significant_overflow:,.2f} has been detected in the selected range.
+            A significant token overflow of ${adjusted_cumulative_overflow:,.2f} (including rewards) has been detected in the selected range.
             Propose a combined strategy that includes:
             - Targeted marketing efforts to attract new buyers and retain existing ones
             - Liquidity provisioning to stabilize token price and reduce volatility
@@ -484,7 +476,7 @@ if significant_overflow > overflow_threshold:
             """
 
         # Query GPT model
-        gpt_response = query_gpt(prompt, model="gpt-3.5-turbo")  # Replace with your desired model
+        gpt_response = query_gpt(prompt, model="gpt-3.5-turbo")  # Replace with your fine-tuned model ID
         st.write("#### Suggested Plan of Action:")
         st.success(gpt_response)
 else:
