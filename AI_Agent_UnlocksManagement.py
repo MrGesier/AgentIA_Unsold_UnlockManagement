@@ -403,7 +403,7 @@ import openai
 
 openai.api_key = "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"  # Replace with your API key or use st.secrets["openai_api_key"]
 
-def query_gpt(prompt, model="text-davinci-003", max_tokens=300, temperature=0.7):
+def query_gpt(prompt, model="gpt-3.5-turbo", max_tokens=300, temperature=0.7):
     """
     Query GPT model (fine-tuned or default).
     
@@ -417,15 +417,23 @@ def query_gpt(prompt, model="text-davinci-003", max_tokens=300, temperature=0.7)
         str: Model-generated response.
     """
     try:
-        response = openai.Completion.create(
-            engine=model,
-            prompt=prompt,
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ],
             max_tokens=max_tokens,
             temperature=temperature,
         )
-        return response.choices[0].text.strip()
+        return response['choices'][0]['message']['content'].strip()
     except Exception as e:
         return f"Error: {e}"
+
+
+
+
+
 
 # Overflow threshold
 overflow_threshold = 250_000  # USD
